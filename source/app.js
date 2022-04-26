@@ -1,0 +1,1 @@
+const steroid = require("../dist/steroid-wallpaper");

@@ -1,0 +1,18 @@
+{
+  "name": "steroid-wallpaper",
+  "version": "0.7.0",
+  "description": "Steroid Wallpaper Extension",
+  "main": "steroid-wallpaper.js",
+  "scripts": {
+    "start": "tsc -w",
+    "build": "tsc -p .",
+    "bundle": "watchify dist/steroid-wallpaper.js -o dist/steroid-wallpaper.bundle.js -v"
+  },
+  "author": "Iván Bogdas Aebersold",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^17.0.0",
+    "typescript": "^4.6.3",
+    "watchify": "^4.0.0"
+  }
+}
