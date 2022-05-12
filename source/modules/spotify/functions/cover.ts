@@ -12,6 +12,6 @@ export async function cover():Promise<string> {
             };
         } catch (error) {
             return "";
-        }
+        };
     });
-}
+};
