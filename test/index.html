@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steroid API testing</title>
+    <script type="text/javascript" src="steroid-wallpaper.bundle.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>steroid-wallpaper test</h1>
+    <br>
+    <div id="testing-panel">
+        <table>
+            <tr>
+                <td><label for="user_id">User ID:</label></td>
+                <td><input type="text" name="user_id" id="user_id" 
+                    value="ivanbogdasaebersold@live.com.ar"
+                ></td>
+            </tr>
+            <tr>
+                <td><label for="wallpaper_token">Wallpaper Token:</label></td>
+                <td><input type="text" name="wallpaper_token" id="wallpaper_token" 
+                    value="536c0b598ce840208660609ee16c89285424851ce660670a938e5ee645f3db04f1838668566a22b014f1bcbd5dd620f4911e61ea58590092473a15f095b19e2e"
+                ></td>
+            </tr>
+        </table>
+        <br>
+        <h3>Features testing:</h3>
+        <div>
+            <b>Login:</b><br>
+            <button id="auth_button">Verification</button>
+            <br>
+            <br>
+            <b>Spotify:</b><br>
+            <button id="spotify_access_button">Spotify Access</button>
+            <button id="spotify_play_button">Spotify Playback</button>
+            <br>
+            <br>
+            <label title="Process the cover automatically to base64" for="spotify_create_cover">Create Cover
+                <input type="checkbox" name="spotify_create_cover" id="spotify_create_cover" checked>
+            </label>
+            <br>
+            <label title="Show song progress" for="spotify_progress">Song Progress
+                <input type="checkbox" name="spotify_progress" id="spotify_progress" checked>
+            </label>
+            <br>
+            <label title="Create a timestamp on mm:ss" for="spotify_process_timestamp">Process Timestamp
+                <input type="checkbox" name="spotify_process_timestamp" id="spotify_process_timestamp" checked>
+            </label>
+            <br>
+            <br>
+            <button id="spotify_auto_playback" value="0">Auto (Off)</button>
+            <br>
+            <br>
+            <button id="spotify_play_playback">Play</button>
+            <button id="spotify_pause_playback">Pause</button>
+            <button id="spotify_stop_playback">Stop</button>
+            <br>
+            <br>
+            <button id="spotify_previous_playback">Previous</button>
+            <button id="spotify_next_playback"">Next</button>
+            <br>
+            <br>
+            <b>Weather:</b><br>
+            <button id="weather_city_button">City</button>
+            <button id="weather_crnt_button">Current</button>
+            <button id="weather_cast_button">Forecast</button>
+        </div>
+        <br>
+    </div>
+    <div id="log-panel">
+        <h3>Spotify:</h3>
+        <a id="spotify_song_name">Song name</a><br>
+        <a id="spotify_song_duration">00:00</a><br>
+        <a id="spotify_song_progress">0</a><br>
+        <a id="spotify_song_status">Stopped</a><br>
+        <br>
+        <img id="spotify_cover">
+        <h3>Log:</h3>
+        <div id="log"></div>
+    </div>
+</body>
+</html>

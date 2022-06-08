@@ -1,0 +1,46 @@
+body {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+body h1 {
+    width: 100%;
+}
+
+#testing-panel {
+    display: inline-block;
+    width: 45%;
+    padding: 5px;
+    border-right: 1px solid grey;
+}
+
+#log-panel {
+    display: inline-block;
+    width: 45%;
+    padding: 5px;
+    border-left: 1px;
+}
+
+#log {
+    display: block;
+    word-wrap: break-word;
+}
+
+#log code {
+    display: block;
+    word-break: break-all;
+    white-space: normal;
+}
+
+/*#spotify_song_progress {
+    display: block;
+    width: 0px;
+    height: 4px;
+    background-color: red;
+}*/
+
+#spotify_cover {
+    width: 100px;
+    height: 100px;
+    background-color: grey;
+}

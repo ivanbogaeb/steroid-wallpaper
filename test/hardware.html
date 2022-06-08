@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steroid API testing</title>
+    <script type="text/javascript" src="hardware.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Hardware testing</h1>
+    <div>
+        <div>
+            <b>Types:</b><br>
+            <button id="get_cpu_button">CPU</button>
+            <button id="get_gpu_button">GPU</button>
+            <button id="get_mem_button">Memory</button>
+            <button id="get_network_button">Network</button>
+            <button id="get_filesystem_button">Filesystem</button>
+            <br><br>
+            <b>Loop:</b><br>
+            <label for="loop_cpu">CPU
+                <input type="checkbox" name="loop_cpu" id="loop_cpu" checked>
+            </label><br>
+            <label for="loop_gpu">GPU
+                <input type="checkbox" name="loop_gpu" id="loop_gpu" checked>
+            </label><br>
+            <label for="loop_memory">Memory
+                <input type="checkbox" name="loop_memory" id="loop_memory" checked>
+            </label><br>
+            <label for="loop_network">Network
+                <input type="checkbox" name="loop_network" id="loop_network" checked>
+            </label><br>
+            <label for="loop_filesystem">Filesystem
+                <input type="checkbox" name="loop_filesystem" id="loop_filesystem" checked>
+            </label><br>
+            <label for="loop_timer">Timing
+                <select name=loop_timer" id="loop_timer">
+                    <option value=100>100ms</option>
+                    <option value=200>200ms </option>
+                    <option value=300>300ms </option>
+                    <option value=400>400ms </option>
+                    <option value=500>500ms </option>
+                    <option value=600>600ms </option>
+                    <option value=700>700ms </option>
+                    <option value=800>800ms </option>
+                    <option value=900>900ms </option>
+                    <option value=1000>1000ms </option>
+                </select>
+            </label>
+            <br><br>
+            <button id="loop_service" value=0>Start</button>
+            <br>
+            <br>
+            <br>
+            <b>Steroid App:</b><br>
+            <button>Soon</button>
+            <button>Soon</button>
+            <button>Soon</button>
+            <button>Soon</button>
+            <button>Soon</button>
+            <button>Soon</button>
+            <button>Soon</button>
+            <button>Soon</button>
+            <br>
+            <br>
+        </div>
+        <br>
+        <h3>Log:</h3>
+        <div id="log">
+            
+        </div>
+    </div>
+</body>
+</html>
