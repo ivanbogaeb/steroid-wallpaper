@@ -2,7 +2,7 @@
   "name": "steroid-wallpaper",
   "version": "0.7.0",
   "description": "Steroid Wallpaper Extension",
-  "main": "steroid-wallpaper.js",
+  "main": "dist/steroid-wallpaper.js",
   "scripts": {
     "start": "tsc -w",
     "build": "tsc -p .",
