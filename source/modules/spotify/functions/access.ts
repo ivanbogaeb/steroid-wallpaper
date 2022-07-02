@@ -27,8 +27,6 @@ export async function access():Promise<any> {
                         _cache.spotify.expiresIn = data.expires_in;
                         helpers.setCache();
                         return {success: true};
-                    } else {
-                        return {error: _errors.spotify.refresh, code: _errors.codes.unauthorized};
                     };
                 case 401:
                     return {error: _errors.spotify.refresh, code: _errors.codes.unauthorized};

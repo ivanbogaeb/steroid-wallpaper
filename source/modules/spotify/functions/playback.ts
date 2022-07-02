@@ -32,8 +32,6 @@ export async function playback(this: any):Promise<object> {
                             let bearer = await access();
                             if (bearer?.success){
                                 return await playback();
-                            } else {
-                                return {error: _errors.spotify.refresh, code: res.status};
                             };
                         case 401:
                             let refresh = await access();
