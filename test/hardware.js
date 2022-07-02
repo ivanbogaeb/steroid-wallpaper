@@ -18,61 +18,38 @@ window.onload = function(){
 
     const loop_service_button = document.getElementById("loop_service");
 
-    const get_cpu = async function(){
-        let response = await fetch("http://localhost:7666/cpu", {
+    const APIRequest = async (hardware) => {
+        let url = `http://localhost:7666/${hardware}`;
+        let response = await fetch(url, {
             method: 'GET'
         }).then(res => {
             res.status === 200 ? res.json().then(res => log.innerText += JSON.stringify(res)) : false;
-    })};
-    const get_gpu = async function(){
-        let response = await fetch("http://localhost:7666/gpu", {
-            method: 'GET'
-        }).then(res => {
-            res.status === 200 ? res.json().then(res => log.innerText += JSON.stringify(res)) : false;
-    })};
-    const get_memory = async function(){
-        let response = await fetch("http://localhost:7666/memory", {
-            method: 'GET'
-        }).then(res => {
-            res.status === 200 ? res.json().then(res => log.innerText += JSON.stringify(res)) : false;
-    })};
-    const get_network = async function(){
-        let response = await fetch("http://localhost:7666/network", {
-            method: 'GET'
-        }).then(res => {
-            res.status === 200 ? res.json().then(res => log.innerText += JSON.stringify(res)) : false;
-    })};
-    const get_filesystem = async function(){
-        let response = await fetch("http://localhost:7666/filesystem", {
-            method: 'GET'
-        }).then(res => {
-            res.status === 200 ? res.json().then(res => log.innerText += JSON.stringify(res)) : false;
-    })};
+        });
+    };
 
-    get_cpu_button.onclick = get_cpu;
-    get_gpu_button.onclick = get_gpu;
-    get_memory_button.onclick = get_memory;
-    get_network_button.onclick = get_network;
-    get_filesystem_button.onclick = get_filesystem;
+    get_cpu_button.onclick = () => {APIRequest('cpu');};
+    get_gpu_button.onclick = () => {APIRequest('gpu');};
+    get_memory_button.onclick = () => {APIRequest('memory');};
+    get_network_button.onclick = () => {APIRequest('network');};
+    get_filesystem_button.onclick = () => {APIRequest('filesystem');};
 
     let intervalFunction = async () => {
-        log.innerText = "";
         if (loop_cpu.checked){
-            get_cpu();
+            APIRequest('cpu');
         };
         if (loop_gpu.checked){
-            get_gpu();
+            APIRequest('gpu');
         };
         if (loop_memory.checked){
-            get_memory();
+            APIRequest('memory');
         };
         if (loop_network.checked){
-            get_network();
+            APIRequest('network');
         };
         if (loop_filesystem.checked){
-            get_filesystem();
+            APIRequest('filesystem');
         };
-    }
+    };
 
     let cycleAll = "";
 
@@ -85,31 +62,6 @@ window.onload = function(){
             cycleAll = setInterval(intervalFunction, loop_timer.value);
             this.value = 1;
             this.innerText = "Stop"
-        }
+        };
     };
-    /*
-    const socket = new WebSocket("ws://localhost:7665");
-    socket.onopen = function(e) {
-        console.log("[open] Connection established");
-        console.log("Sending to server");
-        socket.send(2);
-    };
-
-    socket.onmessage = function(event) {
-        log.innerText = event.data;
-    };
-
-    socket.onclose = function(event) {
-        if (event.wasClean) {
-          console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-        } else {
-          // e.g. server process killed or network down
-          // event.code is usually 1006 in this case
-          console.log('[close] Connection died');
-        }
-    };
-
-    socket.onerror = function(error) {
-        console.log(`[error] ${error.message}`);
-    };*/
 };
