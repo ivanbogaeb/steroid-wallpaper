@@ -18,12 +18,18 @@ window.onload = function(){
 
     const loop_service_button = document.getElementById("loop_service");
 
+    const enable_log = document.getElementById("enable_log");
+
     const APIRequest = async (hardware) => {
         let url = `http://localhost:7666/${hardware}`;
         let response = await fetch(url, {
             method: 'GET'
         }).then(res => {
-            res.status === 200 ? res.json().then(res => log.innerText += JSON.stringify(res)) : false;
+            res.status === 200 ? res.json().then(res => {
+                if (enable_log.checked){
+                    log.innerText += JSON.stringify(res)
+                };
+            }) : false;
         });
     };
 
