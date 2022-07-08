@@ -1,6 +1,6 @@
 import { _cache } from "../../../cache/cache";
 
-import { helpers } from "../../helpers/helpers";
+import { helpers } from "../../helpers";
 
 export function timerReset(){
     _cache.weather.forecast.lastRequest = 0;

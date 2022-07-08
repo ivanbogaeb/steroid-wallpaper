@@ -3,7 +3,7 @@ import { _cache } from "../../../cache/cache";
 import { _errors } from "../../../errors/errors";
 import { settings } from "../../../settings/settings";
 
-import { helpers } from "../../helpers/helpers";
+import { helpers } from "../../helpers";
 import {errorHandler} from "./errorHandler";
 
 export async function cityCode():Promise<any> {
