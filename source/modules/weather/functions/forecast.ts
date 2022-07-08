@@ -6,7 +6,7 @@ import { settings } from "../../../settings/settings";
 
 import { cityCode } from "./cityCode";
 import { errorHandler } from "./errorHandler";
-import { helpers } from "../../helpers/helpers";
+import { helpers } from "../../helpers";
 
 export async function forecast():Promise<any>{
     const metricConverter = (type: string, value: number) => {
