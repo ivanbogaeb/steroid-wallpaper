@@ -1,9 +1,9 @@
-import { _temp } from "../temp/temp";
-import { _cache } from "../cache/cache";
-import { _errors } from "../errors/errors";
-import { settings } from "../settings/settings";
+import { _temp } from "../../temp/temp";
+import { _cache } from "../../cache/cache";
+import { _errors } from "../../errors/errors";
+import { settings } from "../../settings/settings";
 
-import { helpers } from "./helpers/helpers";
+import { helpers } from "../helpers";
 
 export async function initialize(userId: string, wallpaperToken: string): Promise<object> {
     let cache = _cache;
