@@ -1,7 +1,12 @@
 import { initialize } from './modules/initialize';
-import { helpers } from './modules/helpers/helpers';
-import { spotify } from './modules/spotify/spotify';
-import {weather} from './modules/weather/weather';
+import { helpers } from './modules/helpers';
+import { spotify } from './modules/spotify';
+import { weather } from './modules/weather';
+
+import { metrics } from './modules/metrics';
+import { information } from './modules/information';
+
+import { execute } from './modules/execute';
 
 declare global {
     interface Window {
@@ -10,9 +15,11 @@ declare global {
 };
 
 window.Steroid = function Steroid(this: any){
-    // Public functions
     this.helpers = helpers;
     this.initialize = initialize;
     this.spotify = spotify;
     this.weather = weather;
+    this.metrics = metrics;
+    this.information = information;
+    this.execute = execute;
 };
