@@ -6,17 +6,13 @@
 <br>
 
 ## What is it made of?
-- - -
-
 
 - [TypeScript](https://github.com/microsoft/TypeScript) - TypeScript is a superset of JavaScript that compiles to clean JavaScript output.
 - [Node.js](https://github.com/nodejs/node) - JavaScript runtime built on Chrome's V8 JavaScript engine.
 
 <br>
-<br>
 
 ## Table of Contents:
-- - -
 
   - [Features.](#features)
   - [To-do.](#to-do)
@@ -67,7 +63,6 @@
 <br>
 
 ## Features:
-- - -
 
 **Online**
 - [x] Weather information.
@@ -83,23 +78,22 @@
 <br>
 
 ## To-do:
-- - -
 
 - [ ] *Notes and Schedules* (SOON).
 - [ ] *Google Calendar synchronization* (SOON).
 - [ ] *Browser extension connection* (SOON).
 
-#
+<br>
+<br>
 
 ## Download:
-- - -
 
 If you want to download the latest version, you can do so by **[clicking here](https://github.com/ivanbogaeb/steroid-wallpaper/releases)**.
 
-#
+<br>
+<br>
 
 ## Installation:
-- - -
 
 Steroid's browser module comes as a simple JavaScript file, called **`steroid-wallpaper.js`**. This file contains everything you need to communicate with our server, request data and also communicate with Steroid's app.
 
@@ -124,7 +118,6 @@ Steroid's browser module comes as a simple JavaScript file, called **`steroid-wa
 <br>
 
 ## How to use steroid-wallpaper:
-- - -
 
 #### Introduction:
 
@@ -219,7 +212,6 @@ The idea behind this system, is that you as developer can have the flexibility t
 <br>
 
 ## Reference
-- - -
 
 ### Initialize
 
@@ -495,7 +487,9 @@ Steroid metrics are coming directly from the desktop app throught it's independe
 <br>
 
 ## Credits
+
 Steroid is heavily inspired on **[Rainmeter](https://www.rainmeter.net/)**, as an effort to provide a native-like service and experience for **[Wallpaper Engine](https://www.wallpaperengine.io)** users who would like to stay on the JavaScript side of the moon.
 
 ## License
+
 [CC BY NC SA 4.0](LICENSE)
