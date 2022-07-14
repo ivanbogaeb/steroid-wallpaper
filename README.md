@@ -1,6 +1,7 @@
-# <center>steroid-wallpaper ⚡</center>
-### <center>Web wallpapers module</center>
-<center>Web wallpapers module of Steroid, created to connect with <a href='https://steroid-app.github.io'>Steroid</a>, handle API requests to <a href='https://github.io/ivanbogaeb/steroid-app'>steroid-app</a>, process AccuWeather details and Spotify automatically.</center>
+<h1 align="center">steroid-wallpaper ⚡</h1>
+<h3 align="center">Web wallpapers module</h3>
+
+<h4 align="center">Web wallpapers module of <a href='https://steroid-app.github.io'>Steroid</a>, created to connect with <a href='https://github.io/ivanbogaeb/steroid-app'>steroid-app</a>, process AccuWeather details, Spotify automatically, PC statistics and give native execution support.</h4>
 
 <br>
 <br>
