@@ -6,6 +6,11 @@
 <br>
 <br>
 
+<h3 align="center">⚠️ This guide is unfinished! Please be patient, I am still uploading all it's content. ⚠️</h3>
+
+<br>
+<br>
+
 ## What is it made of?
 
 - [TypeScript](https://github.com/microsoft/TypeScript) - TypeScript is a superset of JavaScript that compiles to clean JavaScript output.
