@@ -487,7 +487,9 @@ This response will give you and idea if the service is running or not.
 
 ## Metrics
 
-Steroid metrics are coming directly from the desktop app throught it's independent local API and processed by it's browser module.
+Steroid metrics are coming directly from the desktop app throught it's independent local API and processed by it's browser module, please review **[steroid-app](https://github.com/ivanbogaeb/steroid-app)**.
+
+> For now metrics have to be requested manually to the app until all functions are added.
 
 <br>
 <br>
