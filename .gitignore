@@ -46,6 +46,7 @@ jspm_packages/
 web_modules/
 
 test/
+test
 
 # TypeScript cache
 *.tsbuildinfo
