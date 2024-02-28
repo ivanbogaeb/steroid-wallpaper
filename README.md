@@ -256,7 +256,6 @@ settings: {
     current: true, // If you want to active your current weather
     forecast: true, // If you want to activate your forecast
     forecast_days: 3, // Days of forecast (Max 5)
-    convention: "Metric", // Metric / Fahrenheit
     waitingTime: { // Both in ms
         current: 3600000, // One hour
         forecast: 14400000 // Four hours
