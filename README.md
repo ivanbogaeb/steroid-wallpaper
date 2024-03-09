@@ -131,7 +131,7 @@ Steroid is based on the K.I.S.S. principle *(Keep it simple, stupid)*.
 
 There is no need to create complex and weird solutions for your wallpaper that might bug your head or keep you awake until 4 AM, we already did that for you! It works like a standalone JavaScript module, calling it's functions whenever you need them.
 
-> Keep in mind that steroid-wallpaper is asynchronous.
+> Keep in mind that steroid-wallpaper is asynchronous and requires localStorage to run.
 
 #### Functions:
 
@@ -168,21 +168,20 @@ After this, Steroid will be automatically imported to your window global attribu
 window.onload = () => {
     
     const steroid = new Steroid(); // Creates a new steroid instance
+    // or
+    window.steroid = new Steroid(); // Creates an instance in the window global itself, it can be used globally, but only after the site loaded
 
     const authentication = async (user_id, wallpaper_token) => {
-        let auth = await steroid.initialize(user_id, wallpaper_token); // You must log in to get your user information
-
-        if (auth.success){
+        let {success, data, error, code} = await steroid.initialize(user_id, wallpaper_token); // You must log in to get your user information
+        if (success){
+          doSomemething();
           return true;
         } else {
-          alert(auth.error);
+          alert(error, code);
           return false;
         };
     };
 
-    /*
-        WHATEVER YOU WANT TO DO WITH THE AUTHENTICATION FUNCTION!
-    */
 };
 ```
 
@@ -223,14 +222,17 @@ The idea behind this system, is that you as developer can have the flexibility t
 
 You don't have to constantly keep logging in with your password each time you install a wallpaper, that's why there is a **`wallpaper_token`** that is given in our website.
 
-By calling **`steroid.initialize()`**, your account details will be verified with your **`wallpaper_token`** and **`user_id`**, to return your user information and details.
+By calling **`steroid.initialize()`**, your account details will be verified with your **`wallpaper_token`** and **`user_id`**, to return your user information and details, if your data ever leaks, it will be read-only.
 ```javascript
 let login_response = await steroid.verification();
 ```
 **A normal response should be:**
 ```javascript
 response: {
-    success: true
+  code: 200,
+  data: null,
+  error: false,
+  success: true
 }
 ```
 
@@ -248,6 +250,17 @@ It's highly customizable and easy to work with, you can access to it's memory, s
 
 <br>
 
+#### Weather features:
+Steroid uses the most out of AccuWeather, to display features such as:
+- **UV**: UV stregth.
+- **Sun**: Rise, set and hours of daylight.
+- **City**: Name, state, country, region, latitude, longitude, timezone and AccuWeather city key.
+- **Moon**: Rise, set and hours of moonlight.
+- **Headline**: Any important meteorological change coming, along with severity and category.
+- **Air quality**: Quality of the air, including grass, mold, ragweed and tree data.
+- **Temperature**: Text description, measure, feel and summary with their respective maximum and minimum in imperial and metric.
+- **Day and Night**: Icon, summary, probabilities, wind, rain, snow, ice and total amount of them, light strength and humidity.
+
 #### Settings and customization:
 First of all, you have multiple settings to customize for your own project:
 ```javascript
@@ -255,21 +268,17 @@ settings: {
     active: true, // If you want the weather to be active
     current: true, // If you want to active your current weather
     forecast: true, // If you want to activate your forecast
-    forecast_days: 3, // Days of forecast (Max 5)
     waitingTime: { // Both in ms
-        current: 3600000, // One hour
-        forecast: 14400000 // Four hours
+        current: 1 * 60 * 60 * 1000, // One hour
+        forecast: 4 * 60 * 60 * 1000 // Four hours
     }
 }
 ```
 All the settings mentioned previously can be edited like this:
 ```javascript
 steroid.weather.settings.active = false;
-steroid.weather.settings.forecast_days = 5;
 ```
-And the changes will apply the next time you run or execute the weather function.
-You can use this variables for your own project without any fear of breaking the code.
-For example, let's say you want to have a variable where you want to store if the weather is active or not, well, you can use **`steroid.weather.settings.active`** for that.
+And the changes will apply automatically.
 
 <br>
 
@@ -291,19 +300,15 @@ let forecast_weather = await steroid.weather.forecast();
 ```
 
 > You must have already saved your location and API token on Steroid's webpage.
-> By default, Steroid will request a weather forecast of 3 days, and it will prevent you from calling it in less than four hours.
+> This includes today's full forecast.
 
 <br>
 
-#### City code:
+#### City:
+Returns information about your city.
 ```javascript
-let city_code_change = await steroid.weather.cityCode();
+let city = await steroid.weather.city();
 ```
-This function stores your city code in your **`localStorage`**, and return:
-```javascript
-{success: true}
-```
-Only when the code has been saved.
 
 > You must have already saved your location and API token on Steroid's webpage.
 
@@ -312,21 +317,13 @@ Only when the code has been saved.
 #### Timer reset:
 This function will reset steroid's internal timer, to allow you to request new weather details. It will simply return a **`true/false`** response.
 ```javascript
-let timer_reset = await steroid.weather.timerReset();
-```
-
-<br>
-
-#### Set forecast days:
-This function will change steroid's forecast limit. It will simply return a **`true/false`** response.
-```javascript
-let timer_reset = await steroid.weather.setForecastDays(days);
+let timer_reset = await steroid.weathers.timerReset();
 ```
 
 <br>
 
 #### Weather condition icons:
-Accessing to this variable will give you all the icon codes and names used by AccuWeather.
+Accessing to this variable will give you all the icon codes and names used by AccuWeather, I personally use **[weather-icons](https://github.com/erikflowers/weather-icons)** by Erik Flowers.
 ```javascript
 let icons = steroid.weather.icons;
 let rain_icon = steroid.weather.icons[18];
