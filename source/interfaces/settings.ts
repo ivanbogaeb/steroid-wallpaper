@@ -11,7 +11,6 @@ export interface settingsInterface {
         active: boolean;
         current: boolean;
         forecast: boolean;
-        forecast_days: number;
         waitingTime: {
             current: number;
             forecast: number;

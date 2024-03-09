@@ -9,7 +9,7 @@ import {errorHandler} from "./errorHandler";
 export async function cityCode():Promise<any> {
     if (_temp.user.loggedIn){
         if (settings.weather.active){
-            if (_cache.weather.city.key == ""){
+            if (_cache.weather.city.key === ""){
                 const res = await fetch(
                     `https://dataservice.accuweather.com/locations/v1/cities/search?apikey=${_cache.weather.apiKey}&q=${_cache.weather.location}&language=en-USoffset=1`, 
                     {
@@ -21,29 +21,31 @@ export async function cityCode():Promise<any> {
                     case 200:
                         let data = await res.json();
                         if (data.length > 0){
-                            _cache.weather.city.name = data[0].EnglishName;
-                            _cache.weather.city.state = data[0].AdministrativeArea.EnglishName;
-                            _cache.weather.city.country = data[0].Country.EnglishName;
-                            _cache.weather.city.region = data[0].Region.EnglishName;
-                            _cache.weather.city.latitude = data[0].GeoPosition.Latitude;
-                            _cache.weather.city.longitude = data[0].GeoPosition.Longitude;
-                            _cache.weather.city.timezone = data[0].TimeZone.GmtOffset;
-                            _cache.weather.city.key = data[0].Key;
-                            helpers.setCache();
-                            return {success: true, data: data[0].Key};
+                            _cache.weather.city = {
+                                key: data[0].Key,
+                                name: data[0].EnglishName,
+                                state: data[0].AdministrativeArea.EnglishName,
+                                region: data[0].Region.EnglishName,
+                                country: data[0].Country.EnglishName,
+                                timezone: data[0].TimeZone.GmtOffset,
+                                latitude: data[0].GeoPosition.Latitude,
+                                longitude: data[0].GeoPosition.Longitude,
+                            }
+                            helpers.setCache(_cache);
+                            return {success: true, data: data[0].Key, error: null, code: res.status};
                         } else {
-                            return {error: _errors.weather.locationNotFound, code: _errors.codes.notFound};
+                            return {success: false, data: null, error: _errors.weather.locationNotFound, code: _errors.codes.notFound};
                         }
                     default:
                         return errorHandler(res.status);
                 };
             } else {
-                return {success: true, data: _cache.weather.city.key};
+                return {success: true, data: _cache.weather.city.key, error: null, code: 200};
             };
         } else {
-            return {error: _errors.weather.activate, code: _errors.codes.preConditionRequired};
+            return {sucess: false, data: null, error: _errors.weather.activate, code: _errors.codes.preConditionRequired};
         }
     } else {
-        return {error: _errors.login.noLogin, code: _errors.codes.locked};
+        return {sucess: false, data: null, error: _errors.login.noLogin, code: _errors.codes.locked};
     }
 };

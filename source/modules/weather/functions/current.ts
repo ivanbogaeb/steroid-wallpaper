@@ -74,27 +74,27 @@ export async function current(){
                                     current.precipitation.summary.past18Hours.imperial.value = data.PrecipitationSummary.Past18Hours.Imperial.Value;
                                     current.precipitation.summary.past24Hours.metric.value = data.PrecipitationSummary.Past24Hours.Metric.Value;
                                     current.precipitation.summary.past24Hours.imperial.value = data.PrecipitationSummary.Past24Hours.Imperial.Value;
-                                    await helpers.setCache();
-                                    return {success: true, current: _cache.weather.current};
+                                    await helpers.setCache(_cache);
+                                    return {success: true, data: _cache.weather.current, error: null, code: res.status};
                                 } catch (e){
-                                    return {error: _errors.weather.unavailable, code: _errors.codes.networkConTimeout};
+                                    return {sucess: false, data: null, error: _errors.weather.unavailable, code: _errors.codes.networkConTimeout};
                                 }
                             default:
                                 return errorHandler(res.status);
                         }
                     } else {
-                        return {error: city.error, code: city.code};
+                        return {sucess: false, data: null, error: city.error, code: city.code};
                     }
                 } else {
-                    return {success: true, current: _cache.weather.current};
+                    return {success: true, data: _cache.weather.current, error: null, code: 200};
                 }
             } else {
-                return {error: _errors.weather.activateFunction, code: _errors.codes.preConditionFailed};
+                return {sucess: false, data: null, error: _errors.weather.activateFunction, code: _errors.codes.preConditionFailed};
             }
         } else {
-            return {error: _errors.weather.activate, code: _errors.codes.preConditionRequired};
+            return {sucess: false, data: null, error: _errors.weather.activate, code: _errors.codes.preConditionRequired};
         }
     } else {
-        return {error: _errors.login.noLogin, code: _errors.codes.locked};
+        return {sucess: false, data: null, error: _errors.login.noLogin, code: _errors.codes.locked};
     }
 };

@@ -7,16 +7,17 @@ import { settings } from "../../../settings/settings";
 import { cityCode } from "./cityCode";
 import { errorHandler } from "./errorHandler";
 import { helpers } from "../../helpers";
+import { weatherTodayCache } from "../../../cache/constants/weather";
 
-export async function forecast():Promise<any>{
+export async function forecast(){
     const metricConverter = (type: string, value: number) => {
         switch(type){
             case "in":
-                return (value*25.4).toFixed(2); // Returns mm
+                return parseFloat((value*25.4).toFixed(1)); // Returns mm
             case "mi/h":
-                return (value*1.609344).toFixed(2); // Returns km/h
+                return parseFloat((value*1.609344).toFixed(1)); // Returns km/h
             case "F":
-                return ((value-32)/1.8).toFixed(2); // Returns C
+                return parseFloat(((value-32)/1.8).toFixed(1)); // Returns C
         };
     };
 
@@ -39,134 +40,362 @@ export async function forecast():Promise<any>{
                                     let data = await res.json();
 
                                     // General
-                                    _cache.weather.forecast.headline.severity = data.Headline.Severity;
-                                    _cache.weather.forecast.headline.text = data.Headline.Text;
-                                    _cache.weather.forecast.headline.type = data.Headline.Category;
-                                    _cache.weather.forecast.lastRequest = Date.now();
+                                    _cache.weather.forecast = {
+                                        ..._cache.weather.forecast,
+                                        headline: {
+                                            type: data.Headline.Category,
+                                            text: data.Headline.Text,
+                                            severity: data.Headline.Severity,
+                                        },
+                                        lastRequest: Date.now(),
+                                        days: []
+                                    }
 
-                                    // Reading each day
-                                    data["DailyForecasts"].forEach((day: any, index: number) => {
-                                        let newDay:any = {};
-                                        if (index === 0){ // Today's weather
-                                            newDay = _cache.weather.today;
-                                        } else {
-                                            newDay = _cache.weather.forecast.days[index-1];
-                                        };
+                                    for (let i = 0; i < data["DailyForecasts"].length; i++){
 
-                                        // Air information
-                                        newDay.air.quality.category = day.AirAndPollen[0].Category; // Quality
-                                        newDay.air.quality.type = day.AirAndPollen[0].Type;
-                                        newDay.air.quality.value = day.AirAndPollen[0].Value;
-                                        newDay.air.grass.category = day.AirAndPollen[1].Category; // Grass
-                                        newDay.air.grass.value = day.AirAndPollen[1].Value;
-                                        newDay.air.mold.category = day.AirAndPollen[2].Category; // Mold
-                                        newDay.air.mold.value = day.AirAndPollen[2].Value;
-                                        newDay.air.ragweed.category = day.AirAndPollen[3].Category; // Ragweed
-                                        newDay.air.ragweed.value = day.AirAndPollen[3].Value;
-                                        newDay.air.tree.category = day.AirAndPollen[4].Category; // Tree
-                                        newDay.air.tree.value = day.AirAndPollen[4].Value;
-                                        // Moon
-                                        newDay.moon.age = day.Moon.Age;
-                                        newDay.moon.phase = day.Moon.Phase;
-                                        newDay.moon.rise = day.Moon.Rise;
-                                        newDay.moon.set = day.Moon.Set;
-                                        // Sun
-                                        newDay.sun.hours = day.HoursOfSun;
-                                        newDay.sun.rise = day.Sun.Rise;
-                                        newDay.sun.set = day.Sun.Set;
-                                        // Temperature Description
-                                        newDay.temperature.text.minimum = day.RealFeelTemperature.Minimum.Phrase;
-                                        newDay.temperature.text.maximum = day.RealFeelTemperature.Maximum.Phrase;
-                                        // Temperature Feel
-                                        newDay.temperature.feel.minimum.imperial.value = day.RealFeelTemperature.Minimum.Value;
-                                        newDay.temperature.feel.minimum.metric.value = metricConverter("F", day.RealFeelTemperature.Minimum.Value);
-                                        newDay.temperature.feel.maximum.imperial.value = day.RealFeelTemperature.Maximum.Value;
-                                        newDay.temperature.feel.maximum.metric.value = metricConverter("F", day.RealFeelTemperature.Maximum.Value);
-                                        // Temperature Measure
-                                        newDay.temperature.measure.minimum.imperial.value = day.Temperature.Minimum.Value;
-                                        newDay.temperature.measure.minimum.metric.value = metricConverter("F", day.Temperature.Minimum.Value);
-                                        newDay.temperature.measure.maximum.imperial.value = day.Temperature.Maximum.Value;
-                                        newDay.temperature.measure.maximum.metric.value = metricConverter("F", day.Temperature.Maximum.Value);
-                                        // Temperature Summary
-                                        newDay.temperature.summary.cooling.imperial.value = day.DegreeDaySummary.Cooling.Value;
-                                        newDay.temperature.summary.cooling.metric.value = metricConverter("F", day.DegreeDaySummary.Cooling.Value);
-                                        newDay.temperature.summary.heating.imperial.value = day.DegreeDaySummary.Heating.Value;
-                                        newDay.temperature.summary.heating.metric.value = metricConverter("F", day.DegreeDaySummary.Heating.Value);
-                                        // UV Light
-                                        newDay.uv.category = day.AirAndPollen[5].Category;
-                                        newDay.uv.value = day.AirAndPollen[5].Value;
+                                        let day = data["DailyForecasts"][i];
+                                        let newDay = {
+                                            ...weatherTodayCache,
+                                            uv: { // UV Light
+                                                category: day.AirAndPollen[5].Category,
+                                                value: day.AirAndPollen[5].Value
+                                            },
+                                            moon: { // Moon Data
+                                                age: day.Moon.Age,
+                                                set: day.Moon.Set,
+                                                rise: day.Moon.Rise,
+                                                phase: day.Moon.Phase
+                                            },
+                                            sun: { // Sun Data
+                                                set: day.Sun.Set,
+                                                rise: day.Sun.Rise,
+                                                hours: day.HoursOfSun,
+                                            },
+                                            air: { // Air information
+                                                quality: { // Quality
+                                                    type: day.AirAndPollen[0].Type,
+                                                    value: day.AirAndPollen[0].Value,
+                                                    category: day.AirAndPollen[0].Category
+                                                },
+                                                grass: { // Grass
+                                                    value: day.AirAndPollen[1].Value,
+                                                    category: day.AirAndPollen[1].Category
+                                                },
+                                                mold: { // Mold
+                                                    value: day.AirAndPollen[2].Value,
+                                                    category: day.AirAndPollen[2].Category
+                                                },
+                                                ragweed: { // Ragweed
+                                                    value: day.AirAndPollen[3].Value,
+                                                    category: day.AirAndPollen[3].Category
+                                                },
+                                                tree: { // Tree
+                                                    value: day.AirAndPollen[4].Value,
+                                                    category: day.AirAndPollen[4].Category
+                                                }
+                                            },
+                                            temperature: {
+                                                text: { // Temperature Short Text
+                                                    minimum: day.RealFeelTemperature.Minimum.Phrase,
+                                                    maximum: day.RealFeelTemperature.Maximum.Phrase
+                                                },
+                                                feel: {
+                                                    minimum: {
+                                                        metric: {
+                                                            value: metricConverter("F", day.RealFeelTemperature.Minimum.Value),
+                                                            unit: weatherTodayCache.temperature.feel.minimum.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.RealFeelTemperature.Minimum.Value,
+                                                            unit: weatherTodayCache.temperature.feel.minimum.imperial.unit
+                                                        }
+                                                    },
+                                                    maximum: {
+                                                        metric: {
+                                                            value: metricConverter("F", day.RealFeelTemperature.Maximum.Value),
+                                                            unit: weatherTodayCache.temperature.feel.maximum.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.RealFeelTemperature.Maximum.Value,
+                                                            unit: weatherTodayCache.temperature.feel.maximum.imperial.unit
+                                                        }
+                                                    }
+                                                },
+                                                measure: {
+                                                    minimum: {
+                                                        metric: {
+                                                            value: metricConverter("F", day.Temperature.Minimum.Value),
+                                                            unit: weatherTodayCache.temperature.feel.minimum.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Temperature.Minimum.Value,
+                                                            unit: weatherTodayCache.temperature.feel.minimum.imperial.unit
+                                                        }
+                                                    },
+                                                    maximum: {
+                                                        metric: {
+                                                            value: metricConverter("F", day.Temperature.Maximum.Value),
+                                                            unit: weatherTodayCache.temperature.feel.maximum.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Temperature.Maximum.Value,
+                                                            unit: weatherTodayCache.temperature.feel.maximum.imperial.unit
+                                                        }
+                                                    }
+                                                },
+                                                summary: {
+                                                    cooling: {
+                                                        metric: {
+                                                            value: metricConverter("F", day.DegreeDaySummary.Cooling.Value),
+                                                            unit: weatherTodayCache.temperature.summary.cooling.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.DegreeDaySummary.Cooling.Value,
+                                                            unit: weatherTodayCache.temperature.summary.cooling.imperial.unit
+                                                        }
+                                                    },
+                                                    heating: {
+                                                        metric: {
+                                                            value: metricConverter("F", day.DegreeDaySummary.Heating.Value),
+                                                            unit: weatherTodayCache.temperature.summary.heating.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.DegreeDaySummary.Heating.Value,
+                                                            unit: weatherTodayCache.temperature.summary.heating.imperial.unit
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            day: { // Day cycle Information
+                                                icon: day.Day.Icon, // Icon of the Day
+                                                text: {
+                                                    tiny: day.Day.IconPhrase, // Text summary of daylight, tiny
+                                                    short: day.Day.ShortPhrase, // Text summary of daylight, short
+                                                    long: day.Day.LongPhrase, // Text summary of daylight, long
+                                                },
+                                                probabilities: { // Probability of different conditions in % (Up to 100%)
+                                                    ice: day.Day.IceProbability,
+                                                    rain: day.Day.RainProbability,
+                                                    snow: day.Day.SnowProbability,
+                                                    thunderstorm: day.Day.ThunderstormProbability,
+                                                    precipitation: day.Day.PrecipitacionProbability
+                                                },
+                                                amount: {
+                                                    rain: { // Rain
+                                                        hours: day.Day.HoursOfRain,
+                                                        metric: {
+                                                            value: metricConverter("in", day.Day.Rain.Value),
+                                                            unit: weatherTodayCache.day.amount.rain.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Day.Rain.Value,
+                                                            unit: weatherTodayCache.day.amount.rain.imperial.unit
+                                                        }
+                                                    },
+                                                    ice: { // Ice
+                                                        hours: day.Day.HoursOfIce,
+                                                        metric: {
+                                                            value: metricConverter("in", day.Day.Ice.Value),
+                                                            unit: weatherTodayCache.day.amount.ice.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Day.Ice.Value,
+                                                            unit: weatherTodayCache.day.amount.ice.imperial.unit
+                                                        }
+                                                    },
+                                                    snow: { // Snow
+                                                        hours: day.Day.HoursOfSnow,
+                                                        metric: {
+                                                            value: metricConverter("in", day.Day.Snow.Value),
+                                                            unit: weatherTodayCache.day.amount.snow.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Day.Snow.Value,
+                                                            unit: weatherTodayCache.day.amount.snow.imperial.unit
+                                                        }
+                                                    },
+                                                    total: { // TotalPrecipitation
+                                                        hours: day.Day.HoursOfPrecipitation,
+                                                        metric: {
+                                                            value: metricConverter("in", day.Day.TotalLiquidValue),
+                                                            unit: weatherTodayCache.day.amount.total.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Day.TotalLiquid.Value,
+                                                            unit: weatherTodayCache.day.amount.total.imperial.unit
+                                                        }
+                                                    },
+                                                },
+                                                light: { // Light measures
+                                                    cloudCover: day.Day.CloudCover, // Cloud coverage in % (Up to 100%)
+                                                    solarIrradiance: {
+                                                        value: day.Day.SolarIrradiance.Value,
+                                                        unit: weatherTodayCache.day.light.solarIrradiance.unit
+                                                    },
+                                                    evapotranspiration: {
+                                                        metric: {
+                                                            value: metricConverter("in",day.Day.Evapotranspiration.Value),
+                                                            unit: weatherTodayCache.day.light.evapotranspiration.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Day.Evapotranspiration.Value,
+                                                            unit: weatherTodayCache.day.light.evapotranspiration.imperial.unit
+                                                        },
 
-                                        for (let i = 0; i < 2; i++){
-                                            let cycle = ["", ""];
-                                            if (i === 0){
-                                                cycle[0] = "day";
-                                                cycle[1] = "Day";
-                                            } else {
-                                                cycle[0] = "night";
-                                                cycle[1] = "Night";
+                                                    }
+                                                },
+                                                wind: { // Wind
+                                                    direction: {
+                                                        value: day.Day.Wind.Direction.Degrees,
+                                                        cardinal: day.Day.Wind.Direction.English,
+                                                        unit: {
+                                                            name: weatherTodayCache.day.wind.direction.unit.name,
+                                                            unit: weatherTodayCache.day.wind.direction.unit.unit,
+                                                        },
+                                                    },
+                                                    speed: {
+                                                        metric: {
+                                                            value: metricConverter("mi/h", day.Day.Wind.Speed.Value),
+                                                            unit: weatherTodayCache.day.wind.speed.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Day.Wind.Speed.Value,
+                                                            unit: weatherTodayCache.day.wind.speed.imperial.unit
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            night: { // Day cycle Information
+                                                icon: day.Night.Icon, // Icon of the Day
+                                                text: {
+                                                    tiny: day.Night.IconPhrase, // Text summary of daylight, tiny
+                                                    short: day.Night.ShortPhrase, // Text summary of daylight, short
+                                                    long: day.Night.LongPhrase, // Text summary of daylight, long
+                                                },
+                                                probabilities: { // Probability of different conditions in % (Up to 100%)
+                                                    ice: day.Night.IceProbability,
+                                                    rain: day.Night.RainProbability,
+                                                    snow: day.Night.SnowProbability,
+                                                    thunderstorm: day.Night.ThunderstormProbability,
+                                                    precipitation: day.Night.PrecipitacionProbability
+                                                },
+                                                amount: {
+                                                    rain: { // Rain
+                                                        hours: day.Night.HoursOfRain,
+                                                        metric: {
+                                                            value: metricConverter("in", day.Night.Rain.Value),
+                                                            unit: weatherTodayCache.night.amount.rain.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Night.Rain.Value,
+                                                            unit: weatherTodayCache.night.amount.rain.imperial.unit
+                                                        }
+                                                    },
+                                                    ice: { // Ice
+                                                        hours: day.Night.HoursOfIce,
+                                                        metric: {
+                                                            value: metricConverter("in", day.Night.Ice.Value),
+                                                            unit: weatherTodayCache.night.amount.ice.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Night.Ice.Value,
+                                                            unit: weatherTodayCache.night.amount.ice.imperial.unit
+                                                        }
+                                                    },
+                                                    snow: { // Snow
+                                                        hours: day.Night.HoursOfSnow,
+                                                        metric: {
+                                                            value: metricConverter("in", day.Night.Snow.Value),
+                                                            unit: weatherTodayCache.night.amount.snow.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Night.Snow.Value,
+                                                            unit: weatherTodayCache.night.amount.snow.imperial.unit
+                                                        }
+                                                    },
+                                                    total: { // TotalPrecipitation
+                                                        hours: day.Night.HoursOfPrecipitation,
+                                                        metric: {
+                                                            value: metricConverter("in", day.Night.TotalLiquidValue),
+                                                            unit: weatherTodayCache.night.amount.total.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Night.TotalLiquid.Value,
+                                                            unit: weatherTodayCache.night.amount.total.imperial.unit
+                                                        }
+                                                    },
+                                                },
+                                                light: { // Light measures
+                                                    cloudCover: day.Night.CloudCover, // Cloud coverage in % (Up to 100%)
+                                                    solarIrradiance: {
+                                                        value: day.Night.SolarIrradiance.Value,
+                                                        unit: weatherTodayCache.night.light.solarIrradiance.unit
+                                                    },
+                                                    evapotranspiration: {
+                                                        metric: {
+                                                            value: metricConverter("in",day.Night.Evapotranspiration.Value),
+                                                            unit: weatherTodayCache.night.light.evapotranspiration.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Night.Evapotranspiration.Value,
+                                                            unit: weatherTodayCache.night.light.evapotranspiration.imperial.unit
+                                                        },
+
+                                                    }
+                                                },
+                                                wind: { // Wind
+                                                    direction: {
+                                                        value: day.Night.Wind.Direction.Degrees,
+                                                        cardinal: day.Night.Wind.Direction.English,
+                                                        unit: {
+                                                            name: weatherTodayCache.night.wind.direction.unit.name,
+                                                            unit: weatherTodayCache.night.wind.direction.unit.unit,
+                                                        },
+                                                    },
+                                                    speed: {
+                                                        metric: {
+                                                            value: metricConverter("mi/h", day.Night.Wind.Speed.Value),
+                                                            unit: weatherTodayCache.night.wind.speed.metric.unit
+                                                        },
+                                                        imperial: {
+                                                            value: day.Night.Wind.Speed.Value,
+                                                            unit: weatherTodayCache.night.wind.speed.imperial.unit
+                                                        }
+                                                    }
+                                                }
                                             }
-
-                                            // Day/Night cycle Information
-                                            newDay[cycle[0]].icon = day[cycle[1]].Icon; // Icon
-                                            // Text values
-                                            newDay[cycle[0]].text.tiny = day[cycle[1]].IconPhrase;
-                                            newDay[cycle[0]].text.short = day[cycle[1]].ShortPhrase;
-                                            newDay[cycle[0]].text.long = day[cycle[1]].LongPhrase;
-                                            // Amount
-                                            newDay[cycle[0]].amount.rain.hours = day[cycle[1]].HoursOfRain; // Rain
-                                            newDay[cycle[0]].amount.rain.imperial = day[cycle[1]].Rain.Value;
-                                            newDay[cycle[0]].amount.rain.metric = metricConverter("in", day[cycle[1]].Rain.Value);
-                                            newDay[cycle[0]].amount.ice.hours = day[cycle[1]].HoursOfIce; // Ice
-                                            newDay[cycle[0]].amount.ice.imperial = day[cycle[1]].Ice.Value;
-                                            newDay[cycle[0]].amount.ice.metric = metricConverter("in", day[cycle[1]].Ice.Value);
-                                            newDay[cycle[0]].amount.snow.hours = day[cycle[1]].HoursOfSnow; // Snow
-                                            newDay[cycle[0]].amount.snow.imperial = day[cycle[1]].Snow.Value;
-                                            newDay[cycle[0]].amount.snow.metric = metricConverter("in", day[cycle[1]].Snow.Value);
-                                            newDay[cycle[0]].amount.total.hours = day[cycle[1]].HoursOfPrecipitation; // TotalPrecipitation
-                                            newDay[cycle[0]].amount.total.imperial = day[cycle[1]].TotalLiquid.Value;
-                                            newDay[cycle[0]].amount.total.metric = metricConverter("in", day[cycle[1]].TotalLiquidValue);
-                                            
-                                            // Light measures
-                                            newDay[cycle[0]].light.cloudCover = day[cycle[1]].CloudCover;
-                                            newDay[cycle[0]].light.evapotranspiration.imperial.value = day[cycle[1]].Evapotranspiration.Value;
-                                            newDay[cycle[0]].light.evapotranspiration.metric.value = metricConverter("in",day[cycle[1]].Evapotranspiration.Value);
-                                            newDay[cycle[0]].light.solarIrradiance.value = day[cycle[1]].SolarIrradiance.Value;
-
-                                            // Probabilities
-                                            newDay[cycle[0]].probabilities.rain = day[cycle[1]].RainProbability;
-                                            newDay[cycle[0]].probabilities.ice = day[cycle[1]].IceProbability;
-                                            newDay[cycle[0]].probabilities.snow = day[cycle[1]].SnowProbability;
-                                            newDay[cycle[0]].probabilities.thunderstorm = day[cycle[1]].ThunderstormProbability;
-                                            newDay[cycle[0]].probabilities.precipitation = day[cycle[1]].PrecipitacionProbability;
-
-                                            // Wind
-                                            newDay[cycle[0]].wind.direction.value = day[cycle[1]].Wind.Direction.Degrees;
-                                            newDay[cycle[0]].wind.direction.cardinal = day[cycle[1]].Wind.Direction.English;
-                                            newDay[cycle[0]].wind.speed.imperial.value = day[cycle[1]].Wind.Speed.Value;
-                                            newDay[cycle[0]].wind.speed.metric.value = metricConverter("mi/h", day[cycle[1]].Wind.Speed.Value);
                                         };
-                                    });
-                                    await helpers.setCache();
-                                    return {success: true, current: _cache.weather.forecast};
+
+                                        if (i === 0){
+                                            _cache.weather.today = newDay;
+                                        } else {
+                                            _cache.weather.forecast.days.push(newDay);
+                                        };
+                                        
+                                    };
+
+                                    helpers.setCache(_cache);
+
+                                    return {success: true, data: { today: _cache.weather.today, forecast: _cache.weather.forecast }, error: null, code: res.status};
                                 } catch (e){
-                                    return {error: _errors.weather.unavailable, code: _errors.codes.networkConTimeout};
+                                    return {sucess: false, data: null, error: _errors.weather.unavailable, code: _errors.codes.networkConTimeout};
                                 };
                             default:
                                 return errorHandler(res.status);
                         };
                     } else {
-                        return {error: city.error, code: city.code};
+                        return {sucess: false, data: null, error: city.error, code: city.code};
                     };
                 } else {
-                    return {success: true, current: _cache.weather.forecast};
+                    return {success: true, data: { today: _cache.weather.today, forecast: _cache.weather.forecast }, error: null, code: 200};
                 };
             } else {
-                return {error: _errors.weather.activateFunction, code: _errors.codes.preConditionFailed};
+                return {sucess: false, data: null, error: _errors.weather.activateFunction, code: _errors.codes.preConditionFailed};
             };
         } else {
-            return {error: _errors.weather.activate, code: _errors.codes.preConditionRequired};
+            return {sucess: false, data: null, error: _errors.weather.activate, code: _errors.codes.preConditionRequired};
         };
     } else {
-        return {error: _errors.login.noLogin, code: _errors.codes.locked};
+        return {sucess: false, data: null, error: _errors.login.noLogin, code: _errors.codes.locked};
     };
 };

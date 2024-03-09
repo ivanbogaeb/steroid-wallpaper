@@ -13,7 +13,6 @@ export const settings:settingsInterface = {
         active: true,
         current: true,
         forecast: true,
-        forecast_days: 4,
         waitingTime: {
             current: 3600000, // One hour
             forecast: 14400000, // Four hours
