@@ -1,11 +1,10 @@
-import { cacheInterface } from "../../../interfaces/cache";
-import { errorsInterface } from "../../../interfaces/errors";
+import {_errors} from '../../../errors/errors';
 
-export function getCache(cache: cacheInterface, errors: errorsInterface):any {
+export function getCache(): any {
     try {
-        localStorage.setItem("steroidData", JSON.stringify(cache));
-        return {success: true}
+        let cacheData: any = localStorage.getItem("steroid");
+        return {success: true, data: JSON.parse(cacheData), error: null, code: 200};
     } catch(e){
-        return {error: "LocalStorage is not available.", code: errors.codes.preConditionFailed};
+        return {error: "LocalStorage is not available.", code: _errors.codes.preConditionFailed};
     };
 };

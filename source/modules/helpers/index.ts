@@ -1,18 +1,13 @@
-import {_cache} from '../../cache/cache';
-import {_errors} from '../../errors/errors';
-
 import {getCache} from './functions/getCache';
-import {getStatus} from './functions/getStatus';
 import {setCache} from './functions/setCache';
+import {getStatus} from './functions/getStatus';
+
+import { cacheInterface } from '../../interfaces/cache';
 
 export const helpers = {
-    getCache: () => {
-        return getCache(_cache, _errors);
-    },
-    getStatus: () => {
-        return getStatus(_errors);
-    },
-    setCache: () => {
-        return setCache(_cache, _errors);
+    getCache: getCache,
+    getStatus: getStatus,
+    setCache: (cache: cacheInterface) => {
+        return setCache(cache);
     }
 };

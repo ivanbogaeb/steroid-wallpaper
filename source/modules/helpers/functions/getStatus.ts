@@ -1,6 +1,6 @@
-import { errorsInterface } from "../../../interfaces/errors";
+import {_errors} from '../../../errors/errors';
 
-export async function getStatus(errors: errorsInterface): Promise<object> {
+export async function getStatus(): Promise<object> {
     
     const res = await fetch('https://steroidapp.ddns.net', {
         method: 'GET',
@@ -8,10 +8,10 @@ export async function getStatus(errors: errorsInterface): Promise<object> {
 
     switch(res.status){
         case 200:
-            return {success: true};
+            return {success: true, data: null, error: null, code: 200};
         case 429:
-            return {error: errors.login.cooldown, code: errors.codes.tooManyRequests};
+            return {success: false, data: null, error: _errors.login.cooldown, code: _errors.codes.tooManyRequests};
         default:
-            return {error: errors.offline.noService, code: errors.codes.serviceUnavailable};
+            return {success: false, data: null, error: _errors.offline.noService, code: _errors.codes.serviceUnavailable};
     };
 };
