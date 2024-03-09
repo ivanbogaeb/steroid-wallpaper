@@ -25,18 +25,18 @@ export async function access():Promise<any> {
                         _cache.spotify.tokenType = data.token_type;
                         _cache.spotify.scope = data.scope;
                         _cache.spotify.expiresIn = data.expires_in;
-                        helpers.setCache();
-                        return {success: true};
+                        helpers.setCache(_cache);
+                        return {success: true, data: null, error: false, code: 200};
                     };
                 case 401:
-                    return {error: _errors.spotify.refresh, code: _errors.codes.unauthorized};
+                    return {success: false, data: null, error: _errors.spotify.refresh, code: _errors.codes.unauthorized};
                 default:
-                    return {error: _errors.spotify.issue, code: _errors.codes.serviceUnavailable};
+                    return {success: false, data: null, error: _errors.spotify.issue, code: _errors.codes.serviceUnavailable};
             };
         } else {
-            return {error: _errors.spotify.activate, code: _errors.codes.preConditionRequired};
+            return {success: false, data: null, error: _errors.spotify.activate, code: _errors.codes.preConditionRequired};
         }
     } else {
-        return {error: _errors.login.noLogin, code: _errors.codes.locked};
+        return {success: false, data: null, error: _errors.login.noLogin, code: _errors.codes.locked};
     };
 };
