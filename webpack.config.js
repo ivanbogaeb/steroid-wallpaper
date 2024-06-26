@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
 	mode  : "production",
-	entry : "./source/steroid-wallpaper.ts",
+	entry : "./src/steroid-wallpaper.ts",
 	output: {
 		filename: "steroid-wallpaper.bundle.js",
 		path: path.resolve(__dirname,"dist")

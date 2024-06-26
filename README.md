@@ -71,6 +71,7 @@
 ## Features:
 
 **Online**
+- [X] Notes and schedule. *(Alpha)*.
 - [x] Weather information.
 - [x] Cloud settings backup.
 - [x] Spotify playback and details.
@@ -84,10 +85,8 @@
 <br>
 
 ## To-do:
-
-- [ ] *Notes and Schedules* (SOON).
-- [ ] *Google Calendar synchronization* (SOON).
 - [ ] *Browser extension connection* (SOON).
+- [ ] *Google Calendar synchronization* (SOON).
 
 <br>
 <br>
@@ -463,13 +462,46 @@ progress: {
 #### Server status
 Calling our web API and knowing Steroid's status is as simple as this:
 ```javascript
-  let hello = await steroid.hello(); // Call Steroid API to request server status.
+  let hello = await steroid.keepalive(); // Call Steroid API to request server status.
 ```
-**This call will return a simple boolean:**
+**This call (if success) will return:**
 ```javascript
-{ success: true }
+{ success: true, data: null, error: null, code: 200 }
 ```
 This response will give you and idea if the service is running or not.
+
+#### Cache
+Cache helper allows you to get a direct read to Steroid's cache, this could be useful if you want to get a piece of information at any given point.
+```javascript
+  let cache = await steroid.cache.get();
+```
+
+#### onChange
+One of the most important features of steroid is the `onChange`  helper. This helper allows you to inject a listener inside Steroid's cache, so when one of it's components updates, your code will execute.
+
+> As a small side note, you must know that if the verification process gets triggered and Steroid reloads on memory, this listener will reload too, losing the listening update and causing all components to load with all the new changes already applied. **Be aware of React's components reload**.
+
+For now, you can only listen to the main cache elements, except user data of course:
+- Notes: `steroid.cache.onChange("listen", "notes", yourNotesFunction)`
+- Spotify: `steroid.cache.onChange("listen", "spotify", yourSpotifyFunction)`
+- Weather: `steroid.cache.onChange("listen", "weather", yourWeatherFunction)`
+- Schedule: `steroid.cache.onChange("listen", "schedule", yourScheduleFunction)`
+
+**Listen**:
+```javascript
+  steroid.cache.onChange("listen", "weather", (data) => {
+      if (data){
+        /* Weather data got received, do something with it */
+      }
+  }, false); // False at the end only triggers this function ONCE every update, recommended to leave at 'true' when developing.
+```
+
+As you can see, this helper is pretty straight forward and simple to use. You can also remove listeners you created:
+
+**Remove**:
+```javascript
+  steroid.cache.onChange("remove", "weather"); // Now we remove our listener
+```
 
 <br>
 <br>
